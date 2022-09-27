@@ -60,3 +60,29 @@ impl<T: std::ops::Sub + std::cmp::PartialEq + Sub<Output = T>> Sub for MinMax<T>
     }
 }
 
+
+//impl<T: std::ops::Add + std::cmp::PartialEq + Add<Output = T>> MinMax<T> {
+impl<T: std::fmt::Display+Clone> MinMax<T> {
+
+    pub fn unwrap_value(&self) -> &T {
+        match self {
+            Value(obj) => obj,
+            _ => panic!("Non-Value minmax {}", self)
+        }
+    }
+
+    pub fn  is_value(&self) -> bool {
+        match self {
+            Value(obj) => true,
+            _ => false,
+        }
+    }
+    pub fn unwrap_value_or<'a>(&'a self, alt_value: &'a T) -> &T {
+        match self {
+            Value(obj) => obj,
+            _ => alt_value,
+        }
+    }
+
+}
+

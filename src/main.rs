@@ -2,6 +2,7 @@ mod tsp_nn;
 mod graphbuilder;
 mod cmd_line;
 mod parse;
+mod minmax;
 
 use crate::cmd_line::CommandArgs;
 
@@ -37,19 +38,17 @@ fn main() {
     read_vertex_location(&mut file, &mut tsp);
 
     tsp.calculate(1);
-    if let Some((distance, path)) = tsp.solution() {
-        let int_distance : i64 = distance as i64;
-        if cmd_line.verbose {
-            println!("TSP Distance {}   Path is {:?}  int distances {}", distance, path, int_distance);
-        }
-        else if cmd_line.path {
-            println!("{:?}", path );
-        }
-        else {
-            println!("{}",int_distance);
-        }
+    let (distance, path) = tsp.solution() ;
+
+    // TODO Check or revise this -- 0 is valid length
+    let int_distance : i64 = *distance.unwrap_value_or(&0.0) as i64;
+    if cmd_line.verbose {
+        println!("TSP Distance {}   Path is {:?}  int distances {}", distance, path, int_distance);
+    }
+    else if cmd_line.path {
+        println!("{:?}", path );
     }
     else {
-        println!("No Solution" );
+        println!("{}",int_distance);
     }
 }
