@@ -1,11 +1,11 @@
-use std::ops::{Add,Sub};
+use std::ops::{Add,Sub,AddAssign};
 use log::{ info, error, debug, /*warn,*/ trace };
 
 use std::fmt;
 use crate::minmax::MinMax::{Value,NA};
 
 #[derive(Debug,Clone,Copy,PartialOrd,Ord,PartialEq,Eq)]
-pub enum MinMax<T> {
+pub enum MinMax<T> where T: Clone {
     Min,
     Value(T),
     Max,
@@ -13,7 +13,7 @@ pub enum MinMax<T> {
 }
 
 // Implement `Display` for `MinMax`.
-impl<T: fmt::Display> fmt::Display for MinMax<T>
+impl<T: fmt::Display+ std::clone::Clone> fmt::Display for MinMax<T>
 
 {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
@@ -26,7 +26,7 @@ impl<T: fmt::Display> fmt::Display for MinMax<T>
     }
 }
 
-impl<T: std::ops::Add + std::cmp::PartialEq + Add<Output = T>> Add for MinMax<T> {
+impl<T: std::ops::Add + std::cmp::PartialEq + Add<Output = T>+ std::clone::Clone> Add for MinMax<T> {
     type Output = MinMax<T>;
 
     fn add(self, other: MinMax<T>) -> MinMax<T> {
@@ -42,7 +42,7 @@ impl<T: std::ops::Add + std::cmp::PartialEq + Add<Output = T>> Add for MinMax<T>
     }
 }
 
-impl<T: std::ops::Sub + std::cmp::PartialEq + Sub<Output = T>> Sub for MinMax<T> {
+impl<T: std::ops::Sub + std::cmp::PartialEq + Sub<Output = T>+ std::clone::Clone> Sub for MinMax<T> {
     type Output = MinMax<T>;
 
     fn sub(self, other: MinMax<T>) -> MinMax<T> {
@@ -57,6 +57,14 @@ impl<T: std::ops::Sub + std::cmp::PartialEq + Sub<Output = T>> Sub for MinMax<T>
             (_, MinMax::Max) => MinMax::Min,
             (Value(op1), Value(op2)) => Value(op1-op2),
         }
+    }
+}
+
+
+impl<T: std::ops::Add + std::cmp::PartialEq + Add<Output = T>+std::clone::Clone> AddAssign for MinMax<T> {
+
+    fn add_assign(&mut self, other: Self) {
+        *self =  self.clone() + other;
     }
 }
 

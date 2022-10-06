@@ -81,12 +81,13 @@ impl TSP {
             if min_dist_squared != MinMax::Max {
                 // add the distanced
                 current_distance += min_dist_squared.unwrap_value().sqrt();
+                debug!("current Distance={}",current_distance);
             }
         }
         // curre
 
         let final_distance_squared = (cur_xpos - start_xpos).powf(2.0) + (cur_ypos-start_ypos).powf(2.0);
-        self.total_distance = Value(final_distance_squared.sqrt());
+        self.total_distance += Value(current_distance+final_distance_squared.sqrt());
 
     }
 
